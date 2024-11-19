@@ -10,7 +10,24 @@ class MealController {
 			res.status(500).send(err);
 		}
 	}
-
+	static async getMeal(req, res) {
+		var id = req.params.id;
+		try {
+			const result = await getPool().query(
+				`SELECT * FROM meals WHERE id = ${id}`
+			);
+			if (result.rows.length == 0) {
+				res.status(404).send("No meal found with id " + id);
+				console.log("No meal found with id " + id);
+			} else {
+				console.log(result.rows[0]);
+				res.status(200).send(result.rows[0]);
+			}
+		} catch (err) {
+			console.error("Error executing query", err);
+			res.status(500).send(err);
+		}
+	}
 	static async addMeal(req, res) {
 		var meal = req.body;
 		if (meal && meal.title) {
@@ -50,7 +67,6 @@ class MealController {
 				res.status(404).send("No meal found with id " + id);
 				console.log("No meal found with id " + id);
 			} else {
-				console.log(result.rows);
 				res.status(204).send(result.rows);
 				console.log("Meal deleted:", id);
 			}
