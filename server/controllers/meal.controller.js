@@ -30,11 +30,12 @@ class MealController {
 	}
 	static async addMeal(req, res) {
 		var meal = req.body;
+
 		if (meal && meal.title) {
 			try {
 				const result = await getPool().query(
-					"INSERT INTO meals(title) VALUES($1) RETURNING *",
-					[meal.title]
+					"INSERT INTO meals(title,created_at) VALUES($1, $2) RETURNING *",
+					[meal.title, new Date()]
 				);
 				console.log("Meal created:", result.rows[0]);
 				res.status(201).send(result.rows[0]);
