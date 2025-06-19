@@ -9,13 +9,13 @@
 # https://github.com/docker/awesome-compose
 services:
     db:
-        image: postgres
+        image: mongo
         restart: always
         ports:
-            - 5422:5432
+            - 27017:27017
         environment:
-            POSTGRES_PASSWORD: admin
-            POSTGRES_USER: postgres
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
         volumes:
             - ./dataset:/docker-entrypoint-initdb.d
     server:
@@ -24,11 +24,7 @@ services:
             dockerfile: ./Dockerfile
         environment:
             NODE_ENV: production
-            POSTGRES_DB: postgres
-            POSTGRES_PORT: 5432
-            POSTGRES_HOST: db
-            POSTGRES_USER: postgres
-            POSTGRES_PWD: admin
+            MONGO_URI: mongodb://root:example@db:27017/meal-app?authSource=admin
             API_PORT: 8888
         ports:
             - 8888:8888
@@ -39,18 +35,18 @@ services:
                   target: /app
                   ignore:
                       - node_modules/
-    frontend:
+    client:
         ports:
-            - 3000:3000
+            - 5173:5173
         build:
-            context: ./frontend
+            context: ./client
             dockerfile: ./Dockerfile
         environment:
             - WATCHPACK_POLLING=true
         develop:
             watch:
                 - action: sync
-                  path: ./frontend
+                  path: ./client
                   target: /app
                   ignore:
                       - node_modules/

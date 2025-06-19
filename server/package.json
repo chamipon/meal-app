@@ -2,9 +2,10 @@
 	"name": "server",
 	"version": "1.0.0",
 	"description": "",
+	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"start": "node index.js",
+		"dev": "tsx index.ts",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"dependencies": {
@@ -12,9 +13,16 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.5",
 		"express": "^4.19.2",
+		"mongoose": "^8.16.0",
 		"pg": "^8.12.0",
-		"pg-promise": "^11.9.1"
+		"pg-promise": "^11.9.1",
+		"@types/express": "^5.0.3",
+		"@types/node": "^24.0.3",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.20.3",
+		"typescript": "^5.8.3"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"devDependencies": {}
 }
