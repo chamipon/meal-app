@@ -10,4 +10,4 @@ router.post("/", IngredientController.addIngredient);
 router.delete("/", IngredientController.deleteAllIngredients);
 router.delete("/:id", IngredientController.deleteIngredient);
 
-module.exports = router;
+export default router;

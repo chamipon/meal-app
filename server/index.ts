@@ -6,6 +6,7 @@ import cors from "cors";
 
 import mealRouter from "./routes/meal.router";
 import ingredientRouter from "./routes/ingredient.router";
+import foodRouter from "./routes/food.router";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/ingredients", ingredientRouter);
 app.use("/meals", mealRouter);
+app.use("/foods", foodRouter);
 
 // MongoDB Connection
 console.log(`Attempting mongo connection ${MONGO_URI}`);

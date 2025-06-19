@@ -1,7 +1,7 @@
-import type { Ingredient } from "./Ingredient";
+import type { Food } from "./Food";
 
 export interface Meal {
 	_id: string;
 	title: string;
-	ingredients: Ingredient[];
+	foods: Food[];
 }

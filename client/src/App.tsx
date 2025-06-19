@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Home } from "@/pages/Home";
 import { MealList } from "@/pages/MealList";
+import { FoodList } from "./pages/FoodList";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { IngredientList } from "./pages/IngredientList";
@@ -18,6 +19,7 @@ export default function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/meals" element={<MealList />} />
 						<Route path="/ingredients" element={<IngredientList />} />
+						<Route path="/foods" element={<FoodList />} />
 					</Routes>
 				</main>
 			</SidebarProvider>

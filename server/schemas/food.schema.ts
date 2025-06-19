@@ -8,7 +8,9 @@ export interface IFood extends Document {
 
 const FoodSchema = new Schema<IFood>({
 	title: { type: String, required: true },
-	ingredients: [{ type: Schema.Types.ObjectId, ref: "Ingredient" }],
+	ingredients: [
+		{ type: Schema.Types.ObjectId, required: true, ref: "Ingredient" },
+	],
 });
 
 export const Food = mongoose.model<IFood>("Food", FoodSchema);
