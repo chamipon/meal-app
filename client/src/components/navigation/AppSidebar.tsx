@@ -16,7 +16,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useTheme } from "@/contexts/theme-provider";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Sun, Moon } from "lucide-react";
 // Menu items.
 const sections = [
@@ -25,7 +25,7 @@ const sections = [
 		items: [
 			{
 				title: "Home",
-				url: "/",
+				url: "",
 				icon: Home,
 			},
 			{
@@ -59,6 +59,7 @@ const sections = [
 
 export function AppSidebar() {
 	const { setTheme } = useTheme();
+	const location = useLocation();
 	return (
 		<Sidebar>
 			<SidebarContent>
@@ -71,7 +72,10 @@ export function AppSidebar() {
 								</SidebarGroupLabel>
 								{section.items.map((item) => (
 									<SidebarMenuItem key={item.title}>
-										<SidebarMenuButton asChild>
+										<SidebarMenuButton
+											isActive={location.pathname === item.url}
+											asChild
+										>
 											<Link to={item.url}>
 												<item.icon />
 												<span>{item.title}</span>

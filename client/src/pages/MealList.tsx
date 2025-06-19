@@ -1,5 +1,5 @@
 import { getMeals, addMeal, deleteMeals, deleteMeal } from "@/utils/api/meals";
-import type { Meal } from "@/types/Meal";
+import { MealSchema, type Meal } from "@/types/Meal";
 import { useEffect, useState } from "react";
 import {
 	Card,
@@ -14,6 +14,8 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Cookie } from "lucide-react";
+import { ReusableFormDialog } from "@/components/dialogs/ReusableFormDialog";
+import { z } from "zod";
 export const MealList = () => {
 	const [meals, setMeals] = useState<Meal[]>([]);
 	const [title, setTitle] = useState<string>("");
@@ -24,6 +26,9 @@ export const MealList = () => {
 	useEffect(() => {
 		refresh();
 	}, []);
+	const handleSubmit = (data: z.infer<typeof MealSchema>) => {
+		console.log("Submit:", data);
+	};
 	return (
 		<>
 			{meals ? (
@@ -44,7 +49,15 @@ export const MealList = () => {
 									>
 										Delete
 									</Button>
-									<Button variant="secondary">Edit</Button>
+									<ReusableFormDialog
+										trigger={
+											<Button variant="secondary">Edit</Button>
+										}
+										title="Edit Meal"
+										schema={MealSchema}
+										onSubmit={handleSubmit}
+									/>
+
 									{/* <Button variant="default" onClick={addIngredient}>
                                 Add Ingredient
                             </Button> */}
@@ -68,6 +81,7 @@ export const MealList = () => {
 			)}
 
 			<Separator />
+
 			<div className="space-y-4">
 				<Input
 					placeholder="Meal Title"
@@ -86,6 +100,13 @@ export const MealList = () => {
 				>
 					Add Meal
 				</Button>
+				<ReusableFormDialog
+					trigger={<Button>Add Meal</Button>}
+					title="Add Meal"
+					schema={MealSchema}
+					onSubmit={handleSubmit}
+				/>
+
 				<Button
 					variant="destructive"
 					className="w-full"
