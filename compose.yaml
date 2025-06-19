@@ -45,7 +45,7 @@ services:
             - WATCHPACK_POLLING=true
         develop:
             watch:
-                - action: sync
+                - action: rebuild
                   path: ./client
                   target: /app
                   ignore:
