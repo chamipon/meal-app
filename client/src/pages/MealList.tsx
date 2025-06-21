@@ -1,5 +1,5 @@
 import { getMeals, addMeal, deleteMeals, deleteMeal } from "@/utils/api/meals";
-import { MealSchema, type Meal } from "@/types/Meal";
+import { MealSchema, type MealModel } from "@/types/Meal";
 import { useEffect, useState } from "react";
 import {
 	Card,
@@ -9,7 +9,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+//import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -17,8 +17,7 @@ import { Cookie } from "lucide-react";
 import { ReusableFormDialog } from "@/components/dialogs/ReusableFormDialog";
 import { z } from "zod";
 export const MealList = () => {
-	const [meals, setMeals] = useState<Meal[]>([]);
-	const [title, setTitle] = useState<string>("");
+	const [meals, setMeals] = useState<MealModel[]>([]);
 	const refresh = async () => {
 		const res = await getMeals();
 		setMeals(res);
@@ -26,8 +25,9 @@ export const MealList = () => {
 	useEffect(() => {
 		refresh();
 	}, []);
-	const handleSubmit = (data: z.infer<typeof MealSchema>) => {
-		console.log("Submit:", data);
+	const addSubmit = (data: z.infer<typeof MealSchema>) => {
+		console.log("Adding meal : " + data.title);
+		addMeal(data);
 	};
 	return (
 		<>
@@ -55,7 +55,7 @@ export const MealList = () => {
 										}
 										title="Edit Meal"
 										schema={MealSchema}
-										onSubmit={handleSubmit}
+										onSubmit={addSubmit}
 									/>
 
 									{/* <Button variant="default" onClick={addIngredient}>
@@ -83,28 +83,11 @@ export const MealList = () => {
 			<Separator />
 
 			<div className="space-y-4">
-				<Input
-					placeholder="Meal Title"
-					value={title}
-					onChange={(value) => {
-						setTitle(value.target.value);
-					}}
-				/>
-				<Button
-					className="w-full"
-					onClick={async () => {
-						await addMeal(title);
-						refresh();
-						setTitle("");
-					}}
-				>
-					Add Meal
-				</Button>
 				<ReusableFormDialog
 					trigger={<Button>Add Meal</Button>}
 					title="Add Meal"
 					schema={MealSchema}
-					onSubmit={handleSubmit}
+					onSubmit={addSubmit}
 				/>
 
 				<Button

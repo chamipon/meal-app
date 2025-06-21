@@ -1,8 +1,8 @@
 import axios from "axios";
-import type { Food } from "@/types/Food";
+import type { FoodModel } from "@/types/Food";
 export async function getFoods() {
 	const res = await axios.get("http://localhost:8888/foods");
-	const data: Food[] = res.data;
+	const data: FoodModel[] = res.data;
 	return data;
 }
 
@@ -11,7 +11,7 @@ export async function addFood(title: string) {
 
 	const body = { title: title };
 	const res = await axios.post("http://localhost:8888/foods", body);
-	const data: Food = res.data;
+	const data: FoodModel = res.data;
 
 	return data;
 }

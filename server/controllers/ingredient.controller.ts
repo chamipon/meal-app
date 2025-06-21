@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Ingredient } from "../schemas/ingredient.schema"; // Make sure this is compiled to JS
+import { Ingredient } from "../schemas/ingredient.schema";
 
 class IngredientController {
 	static async getAllIngredients(req: Request, res: Response): Promise<void> {
@@ -29,16 +29,16 @@ class IngredientController {
 	}
 
 	static async addIngredient(req: Request, res: Response): Promise<void> {
-		const { title } = req.body;
+		const { name, amount } = req.body;
 
-		if (!title) {
-			res.status(400).send("Invalid request body: 'title' is required");
+		if (!name) {
+			res.status(400).send("Invalid request body: 'name' is required");
 			console.error("Invalid request body");
 			return;
 		}
 
 		try {
-			const newIngredient = new Ingredient({ title });
+			const newIngredient = new Ingredient({ name, amount });
 			const savedIngredient = await newIngredient.save();
 			console.log("Ingredient created:", savedIngredient);
 			res.status(201).json(savedIngredient);
@@ -71,6 +71,30 @@ class IngredientController {
 			}
 		} catch (err) {
 			console.error("Error deleting ingredient", err);
+			res.status(500).send(err);
+		}
+	}
+
+	static async editIngredient(req: Request, res: Response): Promise<void> {
+		const id = req.params.id;
+		const { name, amount } = req.body;
+
+		try {
+			const updated = await Ingredient.findByIdAndUpdate(
+				id,
+				{ name, amount },
+				{ new: true, runValidators: true }
+			);
+
+			if (!updated) {
+				res.status(404).send(`No ingredient found with id ${id}`);
+				console.log(`No ingredient found with id ${id}`);
+			} else {
+				console.log("Ingredient updated:", updated);
+				res.status(200).json(updated);
+			}
+		} catch (err) {
+			console.error("Error updating ingredient", err);
 			res.status(500).send(err);
 		}
 	}

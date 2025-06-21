@@ -1,5 +1,5 @@
 import { getFoods, addFood, deleteFoods, deleteFood } from "@/utils/api/foods";
-import type { Food } from "@/types/Food";
+import type { FoodModel } from "@/types/Food";
 import { useEffect, useState } from "react";
 import {
 	Card,
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 export const FoodList = () => {
-	const [foods, setFoods] = useState<Food[]>([]);
+	const [foods, setFoods] = useState<FoodModel[]>([]);
 	const [title, setTitle] = useState<string>("");
 	const refresh = async () => {
 		const res = await getFoods();

@@ -1,17 +1,16 @@
 import axios from "axios";
-import type { Ingredient } from "@/types/Ingredient";
+import type { CreateIngredientModel, IngredientModel } from "@/types/Ingredient";
+
 export async function getIngredients() {
 	const res = await axios.get("http://localhost:8888/ingredients");
-	const data: Ingredient[] = res.data;
+	const data: IngredientModel[] = res.data;
 	return data;
 }
 
-export async function addIngredient(title: string) {
-	if (!title.trim()) return;
-
-	const body = { title: title };
+export async function addIngredient(ingredient: CreateIngredientModel) {
+	const body = { name: ingredient.name, amount: ingredient.amount };
 	const res = await axios.post("http://localhost:8888/ingredients", body);
-	const data: Ingredient = res.data;
+	const data: IngredientModel = res.data;
 
 	return data;
 }
@@ -24,4 +23,14 @@ export async function deleteIngredients() {
 export async function deleteIngredient(id: string) {
 	const res = await axios.delete(`http://localhost:8888/ingredients/${id}`);
 	return res.data;
+}
+
+export async function editIngredient(id: string, updated: Partial<IngredientModel>) {
+	const body = {
+		...(updated.name !== undefined && { name: updated.name }),
+		...(updated.amount !== undefined && { amount: updated.amount }),
+	};
+	const res = await axios.put(`http://localhost:8888/ingredients/${id}`, body);
+	const data: IngredientModel = res.data;
+	return data;
 }

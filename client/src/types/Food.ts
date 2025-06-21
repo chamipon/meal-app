@@ -1,9 +1,9 @@
-import { type Ingredient, IngredientSchema } from "./Ingredient";
+import { type IngredientModel, IngredientSchema } from "./Ingredient";
 import { z } from "zod";
-export interface Food {
+export interface FoodModel {
 	_id: string;
 	title: string;
-	ingredients: Ingredient[];
+	ingredients: IngredientModel[];
 }
 export const FoodSchema = z.object({
 	_id: z.string(),

@@ -1,12 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IIngredient extends Document {
-	title: string;
+	name: string;
+	amount: number;
 	created_at: Date;
 }
 
 const IngredientSchema = new Schema<IIngredient>({
-	title: { type: String, required: true },
+	name: { type: String, required: true },
+	amount: { type: Number, required: true },
 	created_at: { type: Date, default: Date.now },
 });
 

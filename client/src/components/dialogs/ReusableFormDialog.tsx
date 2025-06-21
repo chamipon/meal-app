@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodObject, ZodString, ZodNumber } from "zod";
+import { z, ZodObject, ZodString, ZodNumber, ZodReadonly } from "zod";
 import type { ZodRawShape } from "zod";
 import type { ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
@@ -45,9 +45,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 		resolver: zodResolver(schema),
 		defaultValues: defaultValues as DefaultValues<z.infer<T>>,
 	});
-
 	const shape = schema.shape;
-
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -61,7 +59,9 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit)}
+						onSubmit={form.handleSubmit(onSubmit, (e) => {
+							console.log(e);
+						})}
 						className="space-y-4 mt-4"
 					>
 						{(
@@ -72,7 +72,8 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 						).map(([key, fieldSchema]) => {
 							if (
 								fieldSchema instanceof ZodString ||
-								fieldSchema instanceof ZodNumber
+								fieldSchema instanceof ZodNumber ||
+								fieldSchema instanceof ZodReadonly
 							) {
 								return (
 									<FormField
@@ -86,11 +87,15 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 												</FormLabel>
 												<FormControl>
 													<Input
+														disabled={
+															fieldSchema instanceof
+															ZodReadonly
+														}
 														type={
 															fieldSchema instanceof
-															ZodString
-																? "text"
-																: "number"
+															ZodNumber
+																? "number"
+																: "text"
 														}
 														{...field}
 													/>
@@ -101,12 +106,13 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 									/>
 								);
 							}
-
-							// TODO: support enums, booleans, arrays, nested, etc.
-							return null;
 						})}
 
-						<Button type="submit" className="w-full">
+						<Button
+							type="submit"
+							className="w-full cursor-pointer"
+							onClick={() => console.log("test")}
+						>
 							Submit
 						</Button>
 					</form>

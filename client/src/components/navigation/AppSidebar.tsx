@@ -61,7 +61,7 @@ export function AppSidebar() {
 	const { setTheme } = useTheme();
 	const location = useLocation();
 	return (
-		<Sidebar>
+		<Sidebar collapsible="icon">
 			<SidebarContent>
 				<SidebarMenu>
 					{sections.map((section, index) => (
