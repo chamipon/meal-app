@@ -76,6 +76,29 @@ class FoodController {
 			res.status(500).send(err);
 		}
 	}
+	static async editFood(req: Request, res: Response): Promise<void> {
+		const id = req.params.id;
+		const { title, ingredients } = req.body;
+
+		try {
+			const updated = await Food.findByIdAndUpdate(
+				id,
+				{ title, ingredients },
+				{ new: true, runValidators: true }
+			);
+
+			if (!updated) {
+				res.status(404).send(`No food found with id ${id}`);
+				console.log(`No food found with id ${id}`);
+			} else {
+				console.log("Food updated:", updated);
+				res.status(200).json(updated);
+			}
+		} catch (err) {
+			console.error("Error updating food", err);
+			res.status(500).send(err);
+		}
+	}
 }
 
 export default FoodController;

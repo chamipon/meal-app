@@ -25,11 +25,11 @@ export const FoodList = () => {
 		setFoods(res);
 	};
 	const addSubmit = (data: z.infer<typeof CreateFoodSchema>) => {
-		console.log("[INFO] Adding food : " + data.title);
+		console.log("[INFO] Adding food:", data);
 		addFood(data);
 	};
 	const editSubmit = (data: z.infer<typeof FoodSchema>) => {
-		console.log("[INFO] Editing food : " + data);
+		console.log("[INFO] Editing food:", data);
 		if (!data._id) console.error("[ERROR] Missing food ID");
 		else editFood(data._id, data);
 	};
