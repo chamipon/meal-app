@@ -33,7 +33,10 @@ class FoodController {
 
 		if (foodData && foodData.title) {
 			try {
-				const food = new Food({ title: foodData.title });
+				const food = new Food({
+					title: foodData.title,
+					ingredients: foodData.ingredients,
+				});
 				const savedFood = await food.save();
 				console.log("Food created:", savedFood);
 				res.status(201).send(savedFood);

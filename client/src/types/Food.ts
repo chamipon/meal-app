@@ -1,14 +1,25 @@
-import { type IngredientModel, IngredientSchema } from "./Ingredient";
+//import { IngredientSchema } from "./Ingredient";
 import { z } from "zod";
-export interface FoodModel {
-	_id: string;
-	title: string;
-	ingredients: IngredientModel[];
-}
-export const FoodSchema = z.object({
-	_id: z.string(),
+
+// Shared fields
+const BaseFoodSchema = z.object({
 	title: z.string().min(1, "Food title is required"),
 	ingredients: z
-		.array(IngredientSchema)
-		.min(1, "At least one ingredient is required"),
+		.array(z.string())
+		.min(1, "At least one ingredient is required")
+		.describe("IngredientIdArray"),
 });
+
+// For creating ingredients (no _id)
+export const CreateFoodSchema = BaseFoodSchema;
+
+// For full ingredients (e.g., fetched from DB or editing)
+export const FoodSchema = BaseFoodSchema.extend({
+	_id: z.string().readonly(),
+});
+
+// Full type
+export type FoodModel = z.infer<typeof FoodSchema>;
+
+// Create: explicitly no _id
+export type CreateFoodModel = Omit<FoodModel, "_id">;

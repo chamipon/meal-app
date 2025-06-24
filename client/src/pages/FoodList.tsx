@@ -1,5 +1,11 @@
-import { getFoods, addFood, deleteFoods, deleteFood } from "@/utils/api/foods";
-import type { FoodModel } from "@/types/Food";
+import {
+	getFoods,
+	addFood,
+	deleteFoods,
+	deleteFood,
+	editFood,
+} from "@/utils/api/foods";
+import { type FoodModel, CreateFoodSchema, FoodSchema } from "@/types/Food";
 import { useEffect, useState } from "react";
 import {
 	Card,
@@ -9,14 +15,23 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ReusableFormDialog } from "@/components/dialogs/ReusableFormDialog";
 import { Separator } from "@/components/ui/separator";
+import { z } from "zod";
 export const FoodList = () => {
 	const [foods, setFoods] = useState<FoodModel[]>([]);
-	const [title, setTitle] = useState<string>("");
 	const refresh = async () => {
 		const res = await getFoods();
 		setFoods(res);
+	};
+	const addSubmit = (data: z.infer<typeof CreateFoodSchema>) => {
+		console.log("[INFO] Adding food : " + data.title);
+		addFood(data);
+	};
+	const editSubmit = (data: z.infer<typeof FoodSchema>) => {
+		console.log("[INFO] Editing food : " + data);
+		if (!data._id) console.error("[ERROR] Missing food ID");
+		else editFood(data._id, data);
 	};
 	useEffect(() => {
 		refresh();
@@ -40,30 +55,27 @@ export const FoodList = () => {
 								>
 									Delete
 								</Button>
-								<Button variant="secondary">Edit</Button>
+								<ReusableFormDialog
+									trigger={<Button>Edit Ingredient</Button>}
+									title="Edit Ingredient"
+									schema={FoodSchema}
+									onSubmit={editSubmit}
+									defaultValues={
+										item as z.infer<typeof FoodSchema>
+									}
+								/>
 							</CardFooter>
 						</Card>
 					))}
 			</div>
 			<Separator />
 			<div className="space-y-4">
-				<Input
-					placeholder="Food Title"
-					value={title}
-					onChange={(value) => {
-						setTitle(value.target.value);
-					}}
+				<ReusableFormDialog
+					trigger={<Button>Add Food</Button>}
+					title="Add Food"
+					schema={CreateFoodSchema}
+					onSubmit={addSubmit}
 				/>
-				<Button
-					className="w-full"
-					onClick={async () => {
-						await addFood(title);
-						refresh();
-						setTitle("");
-					}}
-				>
-					Add Food
-				</Button>
 				<Button
 					variant="destructive"
 					className="w-full"

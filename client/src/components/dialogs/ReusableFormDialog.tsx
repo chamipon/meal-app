@@ -16,14 +16,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodObject, ZodString, ZodNumber, ZodReadonly } from "zod";
+import { z, ZodObject, ZodString, ZodNumber, ZodReadonly, ZodArray } from "zod";
 import type { ZodRawShape } from "zod";
 import type { ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
-
+import { IngredientMultiSelect } from "./IngredientMultiSelect";
+import { getIngredients } from "@/utils/api/ingredients";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
@@ -105,14 +105,30 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 										)}
 									/>
 								);
+							} else if (fieldSchema instanceof ZodArray) {
+								if (
+									fieldSchema.description === "IngredientIdArray"
+								) {
+									return (
+										<IngredientMultiSelect
+											key={String(key)}
+											name={key as Path<z.infer<T>>}
+											form={form}
+											getOptions={async () => {
+												const ingredients =
+													await getIngredients();
+												return ingredients.map((i) => ({
+													label: i.name,
+													value: i._id,
+												}));
+											}}
+										/>
+									);
+								}
 							}
 						})}
 
-						<Button
-							type="submit"
-							className="w-full cursor-pointer"
-							onClick={() => console.log("test")}
-						>
+						<Button type="submit" className="w-full cursor-pointer">
 							Submit
 						</Button>
 					</form>

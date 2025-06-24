@@ -1,15 +1,13 @@
 import axios from "axios";
-import type { FoodModel } from "@/types/Food";
+import type { CreateFoodModel, FoodModel } from "@/types/Food";
 export async function getFoods() {
 	const res = await axios.get("http://localhost:8888/foods");
 	const data: FoodModel[] = res.data;
 	return data;
 }
 
-export async function addFood(title: string) {
-	if (!title.trim()) return;
-
-	const body = { title: title };
+export async function addFood(food: CreateFoodModel) {
+	const body = { ...food };
 	const res = await axios.post("http://localhost:8888/foods", body);
 	const data: FoodModel = res.data;
 
@@ -24,4 +22,15 @@ export async function deleteFoods() {
 export async function deleteFood(id: string) {
 	const res = await axios.delete(`http://localhost:8888/foods/${id}`);
 	return res.data;
+}
+export async function editFood(id: string, updatedFields: Partial<FoodModel>) {
+	if (!id.trim()) return;
+
+	const res = await axios.patch(
+		`http://localhost:8888/foods/${id}`,
+		updatedFields
+	);
+	const data: FoodModel = res.data;
+
+	return data;
 }
