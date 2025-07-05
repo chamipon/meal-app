@@ -16,3 +16,8 @@ export const UnitEnum = z.enum([
 
 // Inferred type from Zod enum
 export type Unit = z.infer<typeof UnitEnum>;
+
+export const AmountSchema = z.object({
+    quantity: z.coerce.number().nonnegative(),
+    unit: UnitEnum,
+}).describe("AmountSchema");

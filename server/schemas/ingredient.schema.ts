@@ -1,30 +1,19 @@
 // models/Ingredient.ts
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
+import { INutrition, NutritionSchema, IAmount, AmountSchema } from "./nutrition.schema";
 
-export interface INutrition {
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-}
 
 export interface IIngredient extends Document {
-  name: string;
-  unit: string;
-  nutrition: INutrition;
+	name: string;
+	unit: string;
+	amount: IAmount;
+	nutrition: INutrition;
 }
 
-const NutritionSchema = new Schema<INutrition>({
-  calories: { type: Number, required: true },
-  protein: { type: Number, required: true },
-  fat: { type: Number, required: true },
-  carbs: { type: Number, required: true },
-});
-
 const IngredientSchema = new Schema<IIngredient>({
-  name: { type: String, required: true },
-  unit: { type: String, required: true },
-  nutrition: { type: NutritionSchema, required: true },
+	name: { type: String, required: true },
+	amount: {type: AmountSchema, required:true},
+	nutrition: { type: NutritionSchema, required: true },
 });
 
-export default mongoose.model<IIngredient>('Ingredient', IngredientSchema);
+export default mongoose.model<IIngredient>("Ingredient", IngredientSchema);

@@ -1,17 +1,13 @@
 import { z } from "zod";
-import { UnitEnum } from "./Unit";
-export const NutritionSchema = z.object({
-    calories: z.coerce.number().nonnegative(),
-    protein: z.coerce.number().nonnegative(),
-    fat: z.coerce.number().nonnegative(),
-    carbs: z.coerce.number().nonnegative(),
-}).describe("NutritionSchema");
+import { AmountSchema } from "./Amount";
+import { NutritionSchema } from "./Nutrition";
 
 // Shared fields
 const BaseIngredientSchema = z.object({
     name: z.string().min(1),
-    unit: UnitEnum,  // Use the Zod enum here with default value
+    amount: AmountSchema,
     nutrition: NutritionSchema,
+    
 });
 
 // For creating ingredients (no _id)

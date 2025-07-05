@@ -31,7 +31,7 @@ import {
 import type { ZodRawShape } from "zod";
 import { useState, type ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
-import { IngredientMultiSelect } from "./IngredientMultiSelect";
+import { IngredientMultiSelect } from "../form_fields/IngredientMultiSelect";
 import { getIngredients } from "@/utils/api/ingredients";
 import {
 	Select,
@@ -43,14 +43,15 @@ import {
 import { Separator } from "../ui/separator";
 import { toast } from "sonner";
 import { type AxiosResponse } from "axios";
+import QuantityUnitInput from "../form_fields/QuantityUnitInput";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
 	title: string;
 	description?: string;
 	defaultValues?: z.infer<T>;
-    successMessage? : string;
-    errorMessage? : string;
+	successMessage?: string;
+	errorMessage?: string;
 	onSubmit: (data: z.infer<T>) => Promise<AxiosResponse>;
 }
 
@@ -60,8 +61,8 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 	title,
 	description,
 	defaultValues,
-    successMessage,
-    errorMessage,
+	successMessage,
+	errorMessage,
 	onSubmit,
 }: ReusableFormDialogProps<T>) => {
 	const form = useForm<z.infer<T>>({
@@ -135,28 +136,40 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 				);
 			}
 		} else if (fieldSchema instanceof ZodObject) {
-			return (
-				<>
-					<FormLabel className="capitalize text-md">
-						{String(key)}
-					</FormLabel>
+			if (fieldSchema.description === "AmountSchema") {
+				return (
+					<>  
+						<QuantityUnitInput
+							name={key as Path<z.infer<T>>} // Field name that will be used in form data
+							control={form.control}
+							label={String(key)}
+						/>
+						<Separator />
+					</>
+				);
+			} else
+				return (
+					<>
+						<FormLabel className="capitalize text-md">
+							{String(key)}
+						</FormLabel>
 
-					<div className="space-y-4">
-						{Object.entries(fieldSchema.shape).map(
-							([childKey, childSchema]) => {
-								return renderFormField({
-									key: childKey,
-									fieldSchema: childSchema, // Pass the child schema to renderFormField
-									parentStack: parentStack
-										? `${parentStack}.${key}`
-										: key,
-								});
-							}
-						)}
-					</div>
-					<Separator />
-				</>
-			);
+						<div className="space-y-4">
+							{Object.entries(fieldSchema.shape).map(
+								([childKey, childSchema]) => {
+									return renderFormField({
+										key: childKey,
+										fieldSchema: childSchema, // Pass the child schema to renderFormField
+										parentStack: parentStack
+											? `${parentStack}.${key}`
+											: key,
+									});
+								}
+							)}
+						</div>
+						<Separator />
+					</>
+				);
 		} else if (fieldSchema instanceof ZodEnum) {
 			return (
 				<FormField
@@ -203,18 +216,16 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 
 		return null;
 	};
-	const formSubmit = async (data: z.TypeOf<T>) => {   
+	const formSubmit = async (data: z.TypeOf<T>) => {
 		const response = await onSubmit(data);
 		console.log(response);
-        //On Success
+		//On Success
 		if ([200, 201, 202, 204].includes(response.status)) {
 			toast.success(successMessage ?? "Operation Successful!");
 			setDialogOpen(false);
+		} else {
+			toast.error(errorMessage ?? "Operation Failed!");
 		}
-        else{
-            toast.error(errorMessage ?? "Operation Failed!")
-        }
-        
 	};
 	return (
 		<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

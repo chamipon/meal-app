@@ -29,7 +29,7 @@ class IngredientController {
 	}
 
 	static async addIngredient(req: Request, res: Response): Promise<void> {
-		const { name, amount, nutrition, unit } = req.body;
+		const { name, amount, nutrition} = req.body;
 
 		if (!name) {
 			res.status(400).send("Invalid request body: 'name' is required");
@@ -38,7 +38,7 @@ class IngredientController {
 		}
 
 		try {
-			const newIngredient = new Ingredient({ name, amount, nutrition, unit });
+			const newIngredient = new Ingredient({ name, amount, nutrition });
 			const savedIngredient = await newIngredient.save();
 			console.log("Ingredient created:", savedIngredient);
 			res.status(201).json(savedIngredient);
@@ -77,12 +77,12 @@ class IngredientController {
 
 	static async editIngredient(req: Request, res: Response): Promise<void> {
 		const id = req.params.id;
-		const { name, amount, unit, nutrition } = req.body;
+		const { name, amount, nutrition } = req.body;
 
 		try {
 			const updated = await Ingredient.findByIdAndUpdate(
 				id,
-				{ name, amount, unit, nutrition },
+				{ name, amount, nutrition },
 				{ new: true, runValidators: true }
 			);
 
