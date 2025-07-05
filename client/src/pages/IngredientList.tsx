@@ -22,15 +22,16 @@ import { Button } from "@/components/ui/button";
 import { ReusableFormDialog } from "@/components/dialogs/ReusableFormDialog";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
+import { ConfirmationDialog } from "@/components/dialogs/ConfirmationDialog";
 export const IngredientList = () => {
 	const [ingredients, setIngredients] = useState<IngredientModel[]>([]);
 	const refresh = async () => {
 		const res = await getIngredients();
 		setIngredients(res);
 	};
-	const addSubmit = (data: z.infer<typeof CreateIngredientSchema>) => {
+	const addSubmit = async (data: z.infer<typeof CreateIngredientSchema>) => {
 		console.log("[INFO] Adding ingredient", data);
-		addIngredient(data);
+		return await addIngredient(data);
 	};
 	const editSubmit = (data: z.infer<typeof IngredientSchema>) => {
 		console.log("[INFO] Editing ingredient", data);
@@ -50,15 +51,19 @@ export const IngredientList = () => {
 								<CardTitle>{item.name}</CardTitle>
 							</CardHeader>
 							<CardFooter className="flex flex-col gap-2">
-								<Button
-									variant="destructive"
-									onClick={async () => {
+								<ConfirmationDialog
+									trigger={
+										<Button variant="destructive">
+											Delete Ingredient
+										</Button>
+									}
+									title="Delete Ingredient"
+									description={`Are you sure you want to delete \"${item.name}\"? This action cannot be undone.`}
+									onConfirm={async () => {
 										await deleteIngredient(item._id);
 										refresh();
 									}}
-								>
-									Delete
-								</Button>
+								/>
 								<ReusableFormDialog
 									trigger={<Button>Edit Ingredient</Button>}
 									title="Edit Ingredient"
@@ -73,23 +78,26 @@ export const IngredientList = () => {
 					))}
 			</div>
 			<Separator />
-			<div className="space-y-4">
+			<div className="space-x-4">
 				<ReusableFormDialog
 					trigger={<Button>Add Ingredient</Button>}
 					title="Add Ingredient"
 					schema={CreateIngredientSchema}
 					onSubmit={addSubmit}
 				/>
-				<Button
-					variant="destructive"
-					className="w-full"
-					onClick={async () => {
+				<ConfirmationDialog
+					trigger={
+						<Button variant="destructive">
+							Delete All Ingredients
+						</Button>
+					}
+					title="Delete All Ingredients"
+					description={`Are you sure you want to delete ALL ingredients? This action cannot be undone.`}
+					onConfirm={async () => {
 						await deleteIngredients();
 						refresh();
 					}}
-				>
-					Delete All Ingredients
-				</Button>
+				/>
 			</div>
 		</>
 	);

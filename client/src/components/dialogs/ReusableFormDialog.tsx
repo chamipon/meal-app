@@ -29,7 +29,7 @@ import {
 	ZodEnum,
 } from "zod";
 import type { ZodRawShape } from "zod";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
 import { IngredientMultiSelect } from "./IngredientMultiSelect";
 import { getIngredients } from "@/utils/api/ingredients";
@@ -62,6 +62,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 		resolver: zodResolver(schema),
 		defaultValues: defaultValues as DefaultValues<z.infer<T>>,
 	});
+    const [dialogOpen, setDialogOpen] = useState(false);
 	const shape = schema.shape;
 	const renderFormField = ({
 		key,
@@ -198,7 +199,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 	};
 
 	return (
-		<Dialog>
+		<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
@@ -211,12 +212,13 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(
-							(data) => {
-								onSubmit(data);
+							async (data) => {
+								const response = await onSubmit(data);
+                                console.log(response);
+                                setDialogOpen(false)
 							},
 							(errors, e) => {
 								console.log(errors);
-								console.log(e?.target);
 							}
 						)}
 						className="space-y-4 mt-4"

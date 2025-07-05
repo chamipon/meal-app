@@ -10,9 +10,8 @@ export async function getIngredients() {
 export async function addIngredient(ingredient: CreateIngredientModel) {
 	const body = { ...ingredient };
 	const res = await axios.post("http://localhost:8888/ingredients", body);
-	const data: IngredientModel = res.data;
 
-	return data;
+	return res;
 }
 
 export async function deleteIngredients() {
