@@ -23,7 +23,7 @@ const NutritionSchema = new Schema<INutrition>({
 
 const IngredientSchema = new Schema<IIngredient>({
   name: { type: String, required: true },
-  unit: { type: String, required: true, default: 'g' },
+  unit: { type: String, required: true },
   nutrition: { type: NutritionSchema, required: true },
 });
 

@@ -26,12 +26,14 @@ import {
 	ZodReadonly,
 	ZodArray,
 	ZodDefault,
+	ZodEnum,
 } from "zod";
 import type { ZodRawShape } from "zod";
 import type { ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
 import { IngredientMultiSelect } from "./IngredientMultiSelect";
 import { getIngredients } from "@/utils/api/ingredients";
+import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from "../ui/select";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
@@ -137,7 +139,44 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 					</div>
 				</>
 			);
+		} else if (fieldSchema instanceof ZodEnum) {
+			return (
+				<FormField
+					key={String(key)}
+					control={form.control}
+					name={
+						`${parentStack ? `${parentStack}.` : ""}${key}` as Path<
+							z.infer<T>
+						>
+					}
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="capitalize">
+								{String(key)}
+							</FormLabel>
+							<FormControl>
+								<Select onValueChange={field.onChange} {...field}>
+									<SelectTrigger>
+										<SelectValue placeholder="Select unit" />
+									</SelectTrigger>
+                                    <SelectContent>
+									{Object.keys(fieldSchema.Values).map(
+										(key) => (
+											<SelectItem key={key} value={key}>
+												{key}
+											</SelectItem>
+										)
+									)}
+                                    </SelectContent>
+								</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+			);
 		}
+
 		return null;
 	};
 

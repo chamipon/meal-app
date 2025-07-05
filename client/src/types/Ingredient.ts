@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { UnitEnum } from "./Unit";
 export const NutritionSchema = z.object({
     calories: z.coerce.number().nonnegative(),
     protein: z.coerce.number().nonnegative(),
@@ -10,7 +10,7 @@ export const NutritionSchema = z.object({
 // Shared fields
 const BaseIngredientSchema = z.object({
     name: z.string().min(1),
-    unit: z.string().default('g'),
+    unit: UnitEnum,  // Use the Zod enum here with default value
     nutrition: NutritionSchema,
 });
 
