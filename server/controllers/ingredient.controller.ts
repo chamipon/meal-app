@@ -38,7 +38,7 @@ class IngredientController {
 		}
 
 		try {
-			const newIngredient = new Ingredient({ name, amount,nutrition, unit });
+			const newIngredient = new Ingredient({ name, amount, nutrition, unit });
 			const savedIngredient = await newIngredient.save();
 			console.log("Ingredient created:", savedIngredient);
 			res.status(201).json(savedIngredient);
@@ -77,12 +77,12 @@ class IngredientController {
 
 	static async editIngredient(req: Request, res: Response): Promise<void> {
 		const id = req.params.id;
-		const { name, amount } = req.body;
+		const { name, amount, unit, nutrition } = req.body;
 
 		try {
 			const updated = await Ingredient.findByIdAndUpdate(
 				id,
-				{ name, amount },
+				{ name, amount, unit, nutrition },
 				{ new: true, runValidators: true }
 			);
 
