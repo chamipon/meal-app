@@ -29,11 +29,11 @@ export const IngredientList = () => {
 		setIngredients(res);
 	};
 	const addSubmit = (data: z.infer<typeof CreateIngredientSchema>) => {
-		console.log("[INFO] Adding ingredient : " + data);
+		console.log("[INFO] Adding ingredient", data);
 		addIngredient(data);
 	};
 	const editSubmit = (data: z.infer<typeof IngredientSchema>) => {
-		console.log("[INFO] Editing ingredient : " + data);
+		console.log("[INFO] Editing ingredient", data);
 		if (!data._id) console.error("[ERROR] Missing ingredient ID");
 		else editIngredient(data._id, data);
 	};

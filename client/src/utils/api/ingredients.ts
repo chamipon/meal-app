@@ -8,7 +8,7 @@ export async function getIngredients() {
 }
 
 export async function addIngredient(ingredient: CreateIngredientModel) {
-	const body = { name: ingredient.name, amount: ingredient.amount };
+	const body = { ...ingredient };
 	const res = await axios.post("http://localhost:8888/ingredients", body);
 	const data: IngredientModel = res.data;
 
@@ -28,7 +28,7 @@ export async function deleteIngredient(id: string) {
 export async function editIngredient(id: string, updated: Partial<IngredientModel>) {
 	const body = {
 		...(updated.name !== undefined && { name: updated.name }),
-		...(updated.amount !== undefined && { amount: updated.amount }),
+		...(updated.unit !== undefined && { unit: updated.unit }),
 	};
 	const res = await axios.put(`http://localhost:8888/ingredients/${id}`, body);
 	const data: IngredientModel = res.data;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Ingredient } from "../schemas/ingredient.schema";
+import Ingredient from "../schemas/ingredient.schema";
 
 class IngredientController {
 	static async getAllIngredients(req: Request, res: Response): Promise<void> {
@@ -29,7 +29,7 @@ class IngredientController {
 	}
 
 	static async addIngredient(req: Request, res: Response): Promise<void> {
-		const { name, amount } = req.body;
+		const { name, amount, nutrition } = req.body;
 
 		if (!name) {
 			res.status(400).send("Invalid request body: 'name' is required");
@@ -38,7 +38,7 @@ class IngredientController {
 		}
 
 		try {
-			const newIngredient = new Ingredient({ name, amount });
+			const newIngredient = new Ingredient({ name, amount,nutrition });
 			const savedIngredient = await newIngredient.save();
 			console.log("Ingredient created:", savedIngredient);
 			res.status(201).json(savedIngredient);

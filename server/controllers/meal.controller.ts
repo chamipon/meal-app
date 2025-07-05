@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Meal } from "../schemas/meal.schema";
+import Meal from "../schemas/meal.schema";
 
 class MealController {
 	static async getAllMeals(req: Request, res: Response): Promise<void> {

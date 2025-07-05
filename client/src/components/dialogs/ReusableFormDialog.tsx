@@ -18,7 +18,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodObject, ZodString, ZodNumber, ZodReadonly, ZodArray } from "zod";
+import {
+	z,
+	ZodObject,
+	ZodString,
+	ZodNumber,
+	ZodReadonly,
+	ZodArray,
+	ZodDefault,
+} from "zod";
 import type { ZodRawShape } from "zod";
 import type { ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
@@ -46,6 +54,93 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 		defaultValues: defaultValues as DefaultValues<z.infer<T>>,
 	});
 	const shape = schema.shape;
+	const renderFormField = ({
+		key,
+		fieldSchema,
+		parentStack = "",
+	}: {
+		key: any;
+		fieldSchema: any;
+		parentStack?: string;
+	}) => {
+		if (
+			fieldSchema instanceof ZodString ||
+			fieldSchema instanceof ZodNumber ||
+			fieldSchema instanceof ZodDefault ||
+			fieldSchema instanceof ZodReadonly
+		) {
+			return (
+				<FormField
+					key={String(key)}
+					control={form.control}
+					name={
+						`${parentStack ? `${parentStack}.` : ""}${key}` as Path<
+							z.infer<T>
+						>
+					}
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="capitalize">
+								{String(key)}
+							</FormLabel>
+							<FormControl>
+								<Input
+									disabled={
+										fieldSchema instanceof ZodReadonly
+									}
+									type={
+										fieldSchema instanceof ZodNumber
+											? "number"
+											: "text"
+									}
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+			);
+		} else if (fieldSchema instanceof ZodArray) {
+			if (fieldSchema.description === "IngredientIdArray") {
+				return (
+					<IngredientMultiSelect
+						key={String(key)}
+						name={key as Path<z.infer<T>>}
+						form={form}
+						getOptions={async () => {
+							const ingredients = await getIngredients();
+							return ingredients.map((i) => ({
+								label: i.name,
+								value: i._id,
+							}));
+						}}
+					/>
+				);
+			}
+		} else if (fieldSchema instanceof ZodObject) {
+			return (
+				<>
+					<FormLabel className="capitalize">{String(key)}</FormLabel>
+					<div>
+						{Object.entries(fieldSchema.shape).map(
+							([childKey, childSchema]) => {
+								return renderFormField({
+									key: childKey,
+									fieldSchema: childSchema, // Pass the child schema to renderFormField
+									parentStack: parentStack
+										? `${parentStack}.${key}`
+										: key,
+								});
+							}
+						)}
+					</div>
+				</>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -59,9 +154,15 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit, (e) => {
-							console.log(e);
-						})}
+						onSubmit={form.handleSubmit(
+							(data) => {
+								onSubmit(data);
+							},
+							(errors, e) => {
+								console.log(errors);
+								console.log(e?.target);
+							}
+						)}
 						className="space-y-4 mt-4"
 					>
 						{(
@@ -70,62 +171,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 								z.ZodTypeAny
 							][]
 						).map(([key, fieldSchema]) => {
-							if (
-								fieldSchema instanceof ZodString ||
-								fieldSchema instanceof ZodNumber ||
-								fieldSchema instanceof ZodReadonly
-							) {
-								return (
-									<FormField
-										key={String(key)}
-										control={form.control}
-										name={key as Path<z.infer<T>>}
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel className="capitalize">
-													{String(key)}
-												</FormLabel>
-												<FormControl>
-													<Input
-														disabled={
-															fieldSchema instanceof
-															ZodReadonly
-														}
-														type={
-															fieldSchema instanceof
-															ZodNumber
-																? "number"
-																: "text"
-														}
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								);
-							} else if (fieldSchema instanceof ZodArray) {
-								if (
-									fieldSchema.description === "IngredientIdArray"
-								) {
-									return (
-										<IngredientMultiSelect
-											key={String(key)}
-											name={key as Path<z.infer<T>>}
-											form={form}
-											getOptions={async () => {
-												const ingredients =
-													await getIngredients();
-												return ingredients.map((i) => ({
-													label: i.name,
-													value: i._id,
-												}));
-											}}
-										/>
-									);
-								}
-							}
+							return renderFormField({ key, fieldSchema });
 						})}
 
 						<Button type="submit" className="w-full cursor-pointer">

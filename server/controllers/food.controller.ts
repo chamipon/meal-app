@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Food } from "../schemas/food.schema";
+import Food from "../schemas/food.schema";
 
 class FoodController {
 	static async getAllFoods(req: Request, res: Response): Promise<void> {

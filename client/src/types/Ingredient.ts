@@ -1,9 +1,17 @@
 import { z } from "zod";
 
+export const NutritionSchema = z.object({
+    calories: z.coerce.number().nonnegative(),
+    protein: z.coerce.number().nonnegative(),
+    fat: z.coerce.number().nonnegative(),
+    carbs: z.coerce.number().nonnegative(),
+}).describe("NutritionSchema");
+
 // Shared fields
 const BaseIngredientSchema = z.object({
-	name: z.string().min(1, "Ingredient name is required"),
-	amount: z.coerce.number().min(0, "Amount must be non-negative"),
+    name: z.string().min(1),
+    unit: z.string().default('g'),
+    nutrition: NutritionSchema,
 });
 
 // For creating ingredients (no _id)
