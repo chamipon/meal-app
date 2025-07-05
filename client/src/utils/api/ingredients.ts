@@ -31,6 +31,5 @@ export async function editIngredient(id: string, updated: Partial<IngredientMode
         ...(updated.nutrition !== undefined && { nutrition: updated.nutrition }),
 	};
 	const res = await axios.put(`http://localhost:8888/ingredients/${id}`, body);
-	const data: IngredientModel = res.data;
-	return data;
+	return res;
 }

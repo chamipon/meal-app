@@ -25,9 +25,9 @@ export const MealList = () => {
 	useEffect(() => {
 		refresh();
 	}, []);
-	const addSubmit = (data: z.infer<typeof MealSchema>) => {
+	const addSubmit = async (data: z.infer<typeof MealSchema>) => {
 		console.log("Adding meal : " + data.title);
-		addMeal(data);
+		return await addMeal(data);
 	};
 	return (
 		<>

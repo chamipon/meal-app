@@ -9,9 +9,7 @@ export async function getMeals() {
 export async function addMeal(meal: MealModel) {
 	const body = { title: meal.title, foods: meal.foods };
 	const res = await axios.post("http://localhost:8888/meals", body);
-	const data: MealModel = res.data;
-
-	return data;
+    return res;
 }
 
 export async function deleteMeals() {

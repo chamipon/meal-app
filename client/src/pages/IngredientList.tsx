@@ -31,12 +31,15 @@ export const IngredientList = () => {
 	};
 	const addSubmit = async (data: z.infer<typeof CreateIngredientSchema>) => {
 		console.log("[INFO] Adding ingredient", data);
-		return await addIngredient(data);
+		const res = await addIngredient(data);
+        refresh();
+        return res;
 	};
-	const editSubmit = (data: z.infer<typeof IngredientSchema>) => {
+	const editSubmit = async (data: z.infer<typeof IngredientSchema>) => {
 		console.log("[INFO] Editing ingredient", data);
-		if (!data._id) console.error("[ERROR] Missing ingredient ID");
-		else editIngredient(data._id, data);
+		const res = await editIngredient(data._id, data);
+        refresh();
+        return res;
 	};
 	useEffect(() => {
 		refresh();
@@ -69,6 +72,7 @@ export const IngredientList = () => {
 									title="Edit Ingredient"
 									schema={IngredientSchema}
 									onSubmit={editSubmit}
+                                    successMessage="Edit Successful!"
 									defaultValues={
 										item as z.infer<typeof IngredientSchema>
 									}
@@ -84,6 +88,7 @@ export const IngredientList = () => {
 					title="Add Ingredient"
 					schema={CreateIngredientSchema}
 					onSubmit={addSubmit}
+                    successMessage="Ingredient Successfully Added!"
 				/>
 				<ConfirmationDialog
 					trigger={

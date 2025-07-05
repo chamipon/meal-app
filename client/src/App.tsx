@@ -7,6 +7,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { IngredientList } from "./pages/IngredientList";
 import { ThemeProvider } from "./contexts/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 export default function App() {
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -18,10 +19,14 @@ export default function App() {
 					<Routes>
 						<Route path="/" element={<Home />} />
 						<Route path="/meals" element={<MealList />} />
-						<Route path="/ingredients" element={<IngredientList />} />
+						<Route
+							path="/ingredients"
+							element={<IngredientList />}
+						/>
 						<Route path="/foods" element={<FoodList />} />
 					</Routes>
 				</main>
+                <Toaster />
 			</SidebarProvider>
 		</ThemeProvider>
 	);

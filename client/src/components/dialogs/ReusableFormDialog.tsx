@@ -41,13 +41,17 @@ import {
 	SelectContent,
 } from "../ui/select";
 import { Separator } from "../ui/separator";
+import { toast } from "sonner";
+import { type AxiosResponse } from "axios";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
 	title: string;
 	description?: string;
 	defaultValues?: z.infer<T>;
-	onSubmit: (data: z.infer<T>) => void;
+    successMessage? : string;
+    errorMessage? : string;
+	onSubmit: (data: z.infer<T>) => Promise<AxiosResponse>;
 }
 
 export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
@@ -56,13 +60,15 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 	title,
 	description,
 	defaultValues,
+    successMessage,
+    errorMessage,
 	onSubmit,
 }: ReusableFormDialogProps<T>) => {
 	const form = useForm<z.infer<T>>({
 		resolver: zodResolver(schema),
 		defaultValues: defaultValues as DefaultValues<z.infer<T>>,
 	});
-    const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
 	const shape = schema.shape;
 	const renderFormField = ({
 		key,
@@ -197,7 +203,19 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 
 		return null;
 	};
-
+	const formSubmit = async (data: z.TypeOf<T>) => {   
+		const response = await onSubmit(data);
+		console.log(response);
+        //On Success
+		if ([200, 201, 202, 204].includes(response.status)) {
+			toast.success(successMessage ?? "Operation Successful!");
+			setDialogOpen(false);
+		}
+        else{
+            toast.error(errorMessage ?? "Operation Failed!")
+        }
+        
+	};
 	return (
 		<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 			<DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -208,16 +226,13 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 						<DialogDescription>{description}</DialogDescription>
 					)}
 				</DialogHeader>
-
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(
 							async (data) => {
-								const response = await onSubmit(data);
-                                console.log(response);
-                                setDialogOpen(false)
+								formSubmit(data);
 							},
-							(errors, e) => {
+							(errors) => {
 								console.log(errors);
 							}
 						)}
