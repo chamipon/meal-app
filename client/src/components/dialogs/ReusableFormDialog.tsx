@@ -33,7 +33,14 @@ import type { ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
 import { IngredientMultiSelect } from "./IngredientMultiSelect";
 import { getIngredients } from "@/utils/api/ingredients";
-import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from "../ui/select";
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectItem,
+	SelectContent,
+} from "../ui/select";
+import { Separator } from "../ui/separator";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
@@ -123,8 +130,11 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 		} else if (fieldSchema instanceof ZodObject) {
 			return (
 				<>
-					<FormLabel className="capitalize">{String(key)}</FormLabel>
-					<div>
+					<FormLabel className="capitalize text-md">
+						{String(key)}
+					</FormLabel>
+
+					<div className="space-y-4">
 						{Object.entries(fieldSchema.shape).map(
 							([childKey, childSchema]) => {
 								return renderFormField({
@@ -137,6 +147,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 							}
 						)}
 					</div>
+					<Separator />
 				</>
 			);
 		} else if (fieldSchema instanceof ZodEnum) {
@@ -155,19 +166,25 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 								{String(key)}
 							</FormLabel>
 							<FormControl>
-								<Select onValueChange={field.onChange} {...field}>
+								<Select
+									onValueChange={field.onChange}
+									{...field}
+								>
 									<SelectTrigger>
 										<SelectValue placeholder="Select unit" />
 									</SelectTrigger>
-                                    <SelectContent>
-									{Object.keys(fieldSchema.Values).map(
-										(key) => (
-											<SelectItem key={key} value={key}>
-												{key}
-											</SelectItem>
-										)
-									)}
-                                    </SelectContent>
+									<SelectContent>
+										{Object.keys(fieldSchema.Values).map(
+											(key) => (
+												<SelectItem
+													key={key}
+													value={key}
+												>
+													{key}
+												</SelectItem>
+											)
+										)}
+									</SelectContent>
 								</Select>
 							</FormControl>
 							<FormMessage />
