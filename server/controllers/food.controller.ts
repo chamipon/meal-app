@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import Food from "../schemas/food.schema";
-
+import CNFService from "../services/cnf.service";
 class FoodController {
 	static async getAllFoods(req: Request, res: Response): Promise<void> {
 		try {
 			const foods = await Food.find();
+			const item = await CNFService.getFood(668);
+			//console.log(item);
 			res.status(200).send(foods);
 		} catch (err) {
 			console.error("Error fetching foods", err);
