@@ -21,7 +21,7 @@ const BaseIngredientSchema = z.object({
     updated_at: z.coerce.date().optional(),
     
     // Nutritional data using CNF structure
-    nutrients: z.array(CNFNutrientSchema).default([]),
+    nutrients: z.array(CNFNutrientSchema).describe("NutrientArray"),
 });
 
 // For creating ingredients (no _id, created_at, updated_at)

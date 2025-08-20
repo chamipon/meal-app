@@ -32,6 +32,7 @@ import type { ZodRawShape } from "zod";
 import { useState, type ReactNode } from "react";
 import type { Path, DefaultValues } from "react-hook-form";
 import { IngredientMultiSelect } from "../form_fields/IngredientMultiSelect";
+import { CNFNutrientsField } from "../form_fields/CNFNutrientsField";
 import { getIngredients } from "@/utils/api/ingredients";
 import {
 	Select,
@@ -80,6 +81,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 		fieldSchema: any;
 		parentStack?: string;
 	}) => {
+		// console.log(key, fieldSchema);
 		if (
 			fieldSchema instanceof ZodString ||
 			fieldSchema instanceof ZodNumber ||
@@ -134,11 +136,30 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 						}}
 					/>
 				);
+			} else if (fieldSchema.description === "NutrientArray") {
+				return (
+					<>
+						<FormLabel className="capitalize text-md">
+							{String(key)}
+						</FormLabel>
+
+						<div className="space-y-4">
+							<CNFNutrientsField
+								name={key as Path<z.infer<T>>}
+								form={form}
+								label="Nutritional Information"
+								showGrouped={true}
+								editable={true}
+							/>
+						</div>
+						<Separator />
+					</>
+				);
 			}
 		} else if (fieldSchema instanceof ZodObject) {
 			if (fieldSchema.description === "AmountSchema") {
 				return (
-					<>  
+					<>
 						{/* <QuantityUnitInput
 							name={key as Path<z.infer<T>>} // Field name that will be used in form data
 							control={form.control}
