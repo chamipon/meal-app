@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createLogger } from "../utils/logger";
+import { createLogger } from "../utils/logger.js";
 
 const logger = createLogger("CNF_SERVICE");
 const CNF_BASE_URL = "https://food-nutrition.canada.ca/api/canadian-nutrient-file";
@@ -47,7 +47,7 @@ class CNFService {
 
 			// Enrich nutrients with nutrient names in parallel
 			const enrichedNutrients = await Promise.all(
-				nutrients.map(async (el) => {
+				nutrients.map(async (el: any) => {
 					try {
 						const nutrient_name = await this.getNutrientName(
 							el.nutrient_name_id

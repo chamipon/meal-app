@@ -1,6 +1,6 @@
 // models/Meal.ts
 import mongoose, { Document, Schema, Types } from 'mongoose';
-import { INutrition } from './nutrition.schema';
+import { INutrition } from './nutrition.schema.js';
 
 export interface IMealFood {
   food_id: Types.ObjectId;

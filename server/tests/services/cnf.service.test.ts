@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import axios from 'axios'
-import CNFService from '../../services/cnf.service'
+import CNFService from '../../services/cnf.service.js'
 
 vi.mock('axios', () => ({
   default: {
