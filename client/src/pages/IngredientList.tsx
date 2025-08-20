@@ -51,7 +51,7 @@ export const IngredientList = () => {
 					ingredients.map((item) => (
 						<Card key={item._id} className="border">
 							<CardHeader>
-								<CardTitle>{item.name}</CardTitle>
+								<CardTitle>{item.food_description}</CardTitle>
 							</CardHeader>
 							<CardFooter className="flex flex-col gap-2">
 								<ConfirmationDialog
@@ -61,7 +61,7 @@ export const IngredientList = () => {
 										</Button>
 									}
 									title="Delete Ingredient"
-									description={`Are you sure you want to delete \"${item.name}\"? This action cannot be undone.`}
+									description={`Are you sure you want to delete "${item.food_description}"? This action cannot be undone.`}
 									onConfirm={async () => {
 										await deleteIngredient(item._id);
 										refresh();

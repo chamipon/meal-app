@@ -26,9 +26,8 @@ export async function deleteIngredient(id: string) {
 
 export async function editIngredient(id: string, updated: Partial<IngredientModel>) {
 	const body = {
-		...(updated.name !== undefined && { name: updated.name }),
-        ...(updated.nutrition !== undefined && { nutrition: updated.nutrition }),
-        ...(updated.amount !== undefined && { amount: updated.amount }),
+		...(updated.food_description !== undefined && { food_description: updated.food_description }),
+        ...(updated.nutrients !== undefined && { nutrients: updated.nutrients }),
 	};
 	const res = await axios.put(`http://localhost:8888/ingredients/${id}`, body);
 	return res;

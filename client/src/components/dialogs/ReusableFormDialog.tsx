@@ -43,7 +43,7 @@ import {
 import { Separator } from "../ui/separator";
 import { toast } from "sonner";
 import { type AxiosResponse } from "axios";
-import QuantityUnitInput from "../form_fields/QuantityUnitInput";
+// import QuantityUnitInput from "../form_fields/QuantityUnitInput";
 interface ReusableFormDialogProps<T extends ZodObject<ZodRawShape>> {
 	schema: T;
 	trigger: ReactNode;
@@ -128,7 +128,7 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 						getOptions={async () => {
 							const ingredients = await getIngredients();
 							return ingredients.map((i) => ({
-								label: i.name,
+								label: i.food_description,
 								value: i._id,
 							}));
 						}}
@@ -139,11 +139,11 @@ export const ReusableFormDialog = <T extends ZodObject<ZodRawShape>>({
 			if (fieldSchema.description === "AmountSchema") {
 				return (
 					<>  
-						<QuantityUnitInput
+						{/* <QuantityUnitInput
 							name={key as Path<z.infer<T>>} // Field name that will be used in form data
 							control={form.control}
 							label={String(key)}
-						/>
+						/> */}
 						<Separator />
 					</>
 				);
