@@ -24,7 +24,7 @@ export interface ICNFNutrient {
 	};
 }
 
-const CNFNutrientSchema = new Schema<ICNFNutrient>({
+export const CNFNutrientSchema = new Schema<ICNFNutrient>({
 	food_code: { type: Number, required: true },
 	nutrient_value: { type: Number, required: true },
 	standard_error: { type: Number },
@@ -44,24 +44,24 @@ const CNFNutrientSchema = new Schema<ICNFNutrient>({
 			nutrient_web_order: { type: Number, required: true },
 			nutrient_web_name: { type: String, required: true },
 			nutrient_group_id: { type: Number, required: true },
-		}
-	}
+		},
+	},
 });
 
 export interface IIngredient extends Document {
 	// Food identification (food_code optional for manual entries)
 	food_code?: number;
 	food_description: string;
-	
+
 	// Food categorization (from CNF)
 	food_group_id?: number;
 	food_group_name?: string;
-	
+
 	// Additional metadata
-	source: 'cnf' | 'manual';
+	source: "cnf" | "manual";
 	created_at: Date;
 	updated_at: Date;
-	
+
 	// Nutritional data - unified structure based on CNF format
 	nutrients: ICNFNutrient[];
 }
@@ -70,32 +70,32 @@ const IngredientSchema = new Schema<IIngredient>({
 	// Food identification
 	food_code: { type: Number, sparse: true }, // Optional for manual entries
 	food_description: { type: String, required: true },
-	
+
 	// Food categorization
 	food_group_id: { type: Number },
 	food_group_name: { type: String },
-	
+
 	// Metadata
-	source: { type: String, enum: ['cnf', 'manual'], default: 'manual' },
+	source: { type: String, enum: ["cnf", "manual"], default: "manual" },
 	created_at: { type: Date, default: Date.now },
 	updated_at: { type: Date, default: Date.now },
-	
+
 	// Nutritional data using CNF structure
-	nutrients: { type: [CNFNutrientSchema], default: [] }
+	nutrients: { type: [CNFNutrientSchema], default: [] },
 });
 
 // Validation and pre-save hooks
-IngredientSchema.pre('save', function() {
+IngredientSchema.pre("save", function () {
 	// CNF ingredients should have a food_code
-	if (this.source === 'cnf' && !this.food_code) {
-		throw new Error('CNF ingredients must have a food_code');
+	if (this.source === "cnf" && !this.food_code) {
+		throw new Error("CNF ingredients must have a food_code");
 	}
-	
+
 	// All ingredients must have a description
 	if (!this.food_description) {
-		throw new Error('All ingredients must have a food_description');
+		throw new Error("All ingredients must have a food_description");
 	}
-	
+
 	// Update timestamp
 	this.updated_at = new Date();
 });
